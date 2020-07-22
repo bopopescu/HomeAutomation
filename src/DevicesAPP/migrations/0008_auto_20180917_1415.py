@@ -13,12 +13,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='mastergpios',
+            model_name='maingpios',
             name='LabelFalse',
             field=models.CharField(blank=True, default='', help_text='Label for the notification when the IO is False.', max_length=150),
         ),
         migrations.AddField(
-            model_name='mastergpios',
+            model_name='maingpios',
             name='LabelTrue',
             field=models.CharField(blank=True, default='', help_text='Label for the notification when the IO is True.', max_length=150),
         ),

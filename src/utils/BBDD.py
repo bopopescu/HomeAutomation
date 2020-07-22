@@ -102,7 +102,7 @@ class Database(object):
         return rows
     
     def retrieve_DB_structure(self, fields):
-        sql='SELECT %s FROM sqlite_master WHERE type="table"' % (fields) 
+        sql='SELECT %s FROM sqlite_main WHERE type="table"' % (fields) 
         cur = self.conn.cursor()
         cur.execute(sql)
         info = cur.fetchall()
@@ -176,7 +176,7 @@ class Database(object):
         
     def checkIfTableExist(self,table):
         table='"'+table+'"'
-        sql="SELECT name FROM sqlite_master WHERE type='table' AND name="+table
+        sql="SELECT name FROM sqlite_main WHERE type='table' AND name="+table
         return self.executeTransaction(SQLstatement=sql,arg=[])!=[]
 
     def getLastRow(table,vars='*',localized=True):

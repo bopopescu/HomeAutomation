@@ -98,7 +98,7 @@ class MainDeviceVarsForm(ModelForm):
                                             
 
         
-class MasterGPIOsForm(ModelForm):
+class MainGPIOsForm(ModelForm):
     def __init__(self, *args, **kwargs):
         instance=kwargs.get('instance',None)
         try:
@@ -118,19 +118,19 @@ class MasterGPIOsForm(ModelForm):
         self.helper.form_method = 'post'
         
         if action=='add':
-            self.helper.form_action = reverse(APP_TEMPLATE_NAMESPACE+':add',args=['mastergpios'])
+            self.helper.form_action = reverse(APP_TEMPLATE_NAMESPACE+':add',args=['maingpios'])
             buttons=FormActions(
                     Submit('save', _('Save')),
                     #HTML('<a href="{% url "'+APP_TEMPLATE_NAMESPACE+':home" %}" class="btn btn-secondary">'+str(_('Cancel'))+'</a>')
                 )
         elif action=='edit':
-            self.helper.form_action = reverse(APP_TEMPLATE_NAMESPACE+':edit',args=['mastergpios',instance.pk])
+            self.helper.form_action = reverse(APP_TEMPLATE_NAMESPACE+':edit',args=['maingpios',instance.pk])
             buttons=FormActions(
                     Submit('edit', _('Save changes')),
                     #HTML('<a href="{% url "'+APP_TEMPLATE_NAMESPACE+':home" %}" class="btn btn-secondary">'+str(_('Cancel'))+'</a>')
                 )
         else:
-            raise DevicesAppException(_('The action parameter passed to the form MasterGPIOsForm is not accepted. Action= ') + str(action))
+            raise DevicesAppException(_('The action parameter passed to the form MainGPIOsForm is not accepted. Action= ') + str(action))
         
         self.fields['Pin'].label = _("Enter the pin number")
         self.fields['Label'].label = _("Enter a label for the IO")
@@ -167,11 +167,11 @@ class MasterGPIOsForm(ModelForm):
         return instance
     
     class Meta:
-        model = models.MasterGPIOs
+        model = models.MainGPIOs
         fields=['Pin','Label','Direction','Value','NotificationTrue','LabelTrue','NotificationFalse','LabelFalse']
     
     class Media:
-        js = ('MasterGPIOsFormAnimations.js',)
+        js = ('MainGPIOsFormAnimations.js',)
                                        
 class DeviceTypesForm(ModelForm):
     def __init__(self, *args, **kwargs):

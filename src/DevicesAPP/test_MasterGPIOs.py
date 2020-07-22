@@ -1,11 +1,11 @@
 from .test_utils import *
 
 print('############################################')
-print('# TESTING OF MasterGPIOs MODEL FUNCTIONS #')
+print('# TESTING OF MainGPIOs MODEL FUNCTIONS #')
 print('############################################')
 
-@tag('mastergpios')
-class MasterGPIOsModelTests(TestCase):
+@tag('maingpios')
+class MainGPIOsModelTests(TestCase):
     def setUp(self):
         from utils.BBDD import getRegistersDBInstance
         self.DB=getRegistersDBInstance()
@@ -36,7 +36,7 @@ class MasterGPIOsModelTests(TestCase):
             - Introduces a first register into the registers DB with the current value reading it for Inputs, and forcing it in Outputs
         '''
         print('## TESTING THE OPERATION OF THE store2DB METHOD ##')
-        instance=MasterGPIOs(**MasterGPIODict)
+        instance=MainGPIOs(**MainGPIODict)
         now=timezone.now().replace(microsecond=0).replace(tzinfo=None)
         instance.store2DB()
         # checks that store2DB creates the corresponding table in the registers DB and introduces a first record with the current value
@@ -58,7 +58,7 @@ class MasterGPIOsModelTests(TestCase):
             Independently of the operational path followed, this method also sets up the value of the GPIO in case it is an output.
         '''
         print('## TESTING THE OPERATION OF THE updateValue METHOD ##')
-        instance=MasterGPIOs(**MasterGPIODict)
+        instance=MainGPIOs(**MainGPIODict)
         instance.save() # to avoid the creation of the DB tables and insertion of the first row that function store2DB does...
         print('    -> Tested standard path')
         now=timezone.now().replace(microsecond=0).replace(tzinfo=None)
@@ -94,8 +94,8 @@ class MasterGPIOsModelTests(TestCase):
         Method that sets the value of an output to high and updates the value in the registers DB.
         '''
         print('## TESTING THE OPERATION OF THE setHigh METHOD ##')
-        newDict=editDict(keys=['Value',], newValues=[GPIO_LOW,], Dictionary=MasterGPIODict)
-        instance=MasterGPIOs(**newDict)
+        newDict=editDict(keys=['Value',], newValues=[GPIO_LOW,], Dictionary=MainGPIODict)
+        instance=MainGPIOs(**newDict)
         instance.store2DB()
         instance.setHigh()
         self.assertEqual(instance.Value,GPIO_HIGH)# current value equals High
@@ -108,8 +108,8 @@ class MasterGPIOsModelTests(TestCase):
         Method that sets the value of an output to low and updates the value in the registers DB.
         '''
         print('## TESTING THE OPERATION OF THE setLow METHOD ##')
-        newDict=editDict(keys=['Value',], newValues=[GPIO_HIGH,], Dictionary=MasterGPIODict)
-        instance=MasterGPIOs(**newDict)
+        newDict=editDict(keys=['Value',], newValues=[GPIO_HIGH,], Dictionary=MainGPIODict)
+        instance=MainGPIOs(**newDict)
         instance.store2DB()
         instance.setLow()
         self.assertEqual(instance.Value,GPIO_LOW)# current value equals Low
@@ -124,10 +124,10 @@ class MasterGPIOsModelTests(TestCase):
         '''
         import time
         print('## TESTING THE OPERATION OF THE registers DB Integrity Error handler METHOD ##')
-        instance=MasterGPIOs(**MasterGPIODict)
+        instance=MainGPIOs(**MainGPIODict)
         instance.store2DB()
-        newDict=editDict(keys=['Pin','Label'], newValues=[15,'Test Output 2'], Dictionary=MasterGPIODict)
-        instance2=MasterGPIOs(**newDict)
+        newDict=editDict(keys=['Pin','Label'], newValues=[15,'Test Output 2'], Dictionary=MainGPIODict)
+        instance2=MainGPIOs(**newDict)
         time.sleep(1)
         instance2.store2DB()
           
@@ -160,31 +160,31 @@ class MasterGPIOsModelTests(TestCase):
           
     def test_str(self):        
         print('## TESTING THE OPERATION OF THE str METHOD ##')
-        instance=MasterGPIOs(**MasterGPIODict)
+        instance=MainGPIOs(**MainGPIODict)
         instance.store2DB()
         self.assertEqual(str(instance),instance.Label + ' on pin ' + str(instance.Pin) )
         self.DB.dropTable(table=instance.getRegistersDBTable())
       
     def test_initializeIOs(self):
         print('## TESTING THE OPERATION OF THE initializeIOs METHOD ##')
-        instance=MasterGPIOs(**MasterGPIODict)
+        instance=MainGPIOs(**MainGPIODict)
         instance.store2DB()
-        newDict=editDict(keys=['Pin','Label','Direction','Value'], newValues=[15,'Test Input 1',GPIO_INPUT,GPIO_LOW], Dictionary=MasterGPIODict)
-        instance2=MasterGPIOs(**newDict)
+        newDict=editDict(keys=['Pin','Label','Direction','Value'], newValues=[15,'Test Input 1',GPIO_INPUT,GPIO_LOW], Dictionary=MainGPIODict)
+        instance2=MainGPIOs(**newDict)
         instance2.store2DB()
           
         print('    -> Tested declareInputEvent=True')
-        MasterGPIOs.initializeIOs(declareInputEvent=True)
+        MainGPIOs.initializeIOs(declareInputEvent=True)
         print('    -> Tested declareInputEvent=False')
-        MasterGPIOs.initializeIOs(declareInputEvent=False)
+        MainGPIOs.initializeIOs(declareInputEvent=False)
          
         self.DB.dropTable(table=instance.getRegistersDBTable())
         self.DB.dropTable(table=instance2.getRegistersDBTable())
     
     def test_InputChangeEvent(self):
         print('## TESTING THE OPERATION OF THE InputChangeEvent METHOD ##')
-        newDict=editDict(keys=['Pin','Label','Direction','Value'], newValues=[15,'Test Input 1',GPIO_INPUT,GPIO_HIGH], Dictionary=MasterGPIODict)
-        instance=MasterGPIOs(**newDict)
+        newDict=editDict(keys=['Pin','Label','Direction','Value'], newValues=[15,'Test Input 1',GPIO_INPUT,GPIO_HIGH], Dictionary=MainGPIODict)
+        instance=MainGPIOs(**newDict)
         instance.save()
         
         instance.InputChangeEvent()
@@ -201,8 +201,8 @@ class MasterGPIOsModelTests(TestCase):
     
     def test_updateLabel(self):
         print('## TESTING THE OPERATION OF THE updateLabel METHOD ##')
-        newDict=editDict(keys=['Pin','Label','Direction','Value'], newValues=[15,'Test Input 1',GPIO_INPUT,GPIO_HIGH], Dictionary=MasterGPIODict)
-        instance=MasterGPIOs(**newDict)
+        newDict=editDict(keys=['Pin','Label','Direction','Value'], newValues=[15,'Test Input 1',GPIO_INPUT,GPIO_HIGH], Dictionary=MainGPIODict)
+        instance=MainGPIOs(**newDict)
         instance.save()
         
         SUBSYSTEMs=MainAPP.models.Subsystems.objects.filter(gpios=instance)
@@ -249,12 +249,12 @@ class MasterGPIOsModelTests(TestCase):
         local_tz=get_localzone()
           
         dateIni=(timezone.now()-datetime.timedelta(seconds=1)).replace(microsecond=0)
-        outDict=editDict(keys=['Value',], newValues=[GPIO_LOW,], Dictionary=MasterGPIODict)
-        instance=MasterGPIOs(**outDict)
+        outDict=editDict(keys=['Value',], newValues=[GPIO_LOW,], Dictionary=MainGPIODict)
+        instance=MainGPIOs(**outDict)
         instance.store2DB()
           
-        inDict=editDict(keys=['Pin','Label','Direction','Value'], newValues=[15,'Test Input 1',GPIO_INPUT,GPIO_LOW], Dictionary=MasterGPIODict)
-        instance2=MasterGPIOs(**inDict)
+        inDict=editDict(keys=['Pin','Label','Direction','Value'], newValues=[15,'Test Input 1',GPIO_INPUT,GPIO_LOW], Dictionary=MainGPIODict)
+        instance2=MainGPIOs(**inDict)
         instance2.store2DB()
         instance.updateValue(newValue=GPIO_HIGH,timestamp=None,writeDB=True,force=False)
         instance2.updateValue(newValue=GPIO_HIGH,timestamp=None,writeDB=True,force=False)
@@ -264,7 +264,7 @@ class MasterGPIOsModelTests(TestCase):
           
         dateEnd=timezone.now().replace(microsecond=0)
           
-        charts=MasterGPIOs.getCharts(fromDate=dateIni,toDate=dateEnd)
+        charts=MainGPIOs.getCharts(fromDate=dateIni,toDate=dateEnd)
         for chart in charts:
             title=chart['title']
             self.assertTrue(title in 'inputs outputs')
@@ -285,7 +285,7 @@ class MasterGPIOsModelTests(TestCase):
         '''
         dateIni=(timezone.now()+datetime.timedelta(seconds=1)).replace(microsecond=0)
         dateEnd=(dateIni+datetime.timedelta(seconds=10)).replace(microsecond=0)
-        charts=MasterGPIOs.getCharts(fromDate=dateIni,toDate=dateEnd)
+        charts=MainGPIOs.getCharts(fromDate=dateIni,toDate=dateEnd)
         for chart in charts:
             title=chart['title']
             self.assertTrue(len(chart['rows'])==2) # there are 2 rows with data dated at dateIni and dateEnd resp.
@@ -298,11 +298,11 @@ class MasterGPIOsModelTests(TestCase):
         print('    -> Tested with no table in the DB')
         instance.delete()
         instance2.delete()
-        instance=MasterGPIOs(**outDict)
+        instance=MainGPIOs(**outDict)
         instance.save()
-        instance2=MasterGPIOs(**inDict)
+        instance2=MainGPIOs(**inDict)
         instance2.save()
-        charts=MasterGPIOs.getCharts(fromDate=dateIni,toDate=dateEnd)
+        charts=MainGPIOs.getCharts(fromDate=dateIni,toDate=dateEnd)
         for chart in charts:
             title=chart['title']
             self.assertAlmostEqual(datetime.datetime.fromtimestamp(chart['rows'][0][0]/1000,tz=local_tz),dateIni,delta=datetime.timedelta(seconds=1))# checks that the first row is dated as dateIni
@@ -318,7 +318,7 @@ class MasterGPIOsModelTests(TestCase):
         instance2.checkRegistersDB(Database=self.DB)
         self.assertTrue(self.DB.checkIfTableExist(instance.getRegistersDBTable()))
         self.assertTrue(self.DB.checkIfTableExist(instance2.getRegistersDBTable()))
-        charts=MasterGPIOs.getCharts(fromDate=dateIni,toDate=dateEnd)
+        charts=MainGPIOs.getCharts(fromDate=dateIni,toDate=dateEnd)
         for chart in charts:
             title=chart['title']
             self.assertTrue(len(chart['rows'])==2) # there are 2 rows with data dated at dateIni and dateEnd resp.
@@ -334,11 +334,11 @@ class MasterGPIOsModelTests(TestCase):
         self.DB.dropTable(table=instance2.getRegistersDBTable())
          
 print('###########################################')
-print('# TESTING OF MasterGPIOsForm FUNCTIONS #')
+print('# TESTING OF MainGPIOsForm FUNCTIONS #')
 print('###########################################')
 
-@tag('mastergpios')
-class MasterGPIOsForm(TestCase):
+@tag('maingpios')
+class MainGPIOsForm(TestCase):
     remoteDVT=None
     localDVT=None
     memoryDVT=None
@@ -352,8 +352,8 @@ class MasterGPIOsForm(TestCase):
         '''
         print('## TESTING THE CREATION OF INSTANCE THROUGH FORM ##')
         
-#         outDict=editDict(keys=['Value','Label'], newValues=[GPIO_LOW,'test'], Dictionary=MasterGPIODict)
-#         form = MasterGPIOsForm(outDict)
+#         outDict=editDict(keys=['Value','Label'], newValues=[GPIO_LOW,'test'], Dictionary=MainGPIODict)
+#         form = MainGPIOsForm(outDict)
 #         self.assertTrue(form.is_valid())
 #         instance = form.save()
 #         AVARs=MainAPP.models.AutomationVariables.objects.filter(Device='MainGPIOs').filter(Tag=instance.getRegistersDBTag())

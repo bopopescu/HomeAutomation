@@ -80,8 +80,8 @@ class Migration(migrations.Migration):
                 ('Error', models.CharField(blank=True, default='', max_length=100)),
             ],
             options={
-                'verbose_name': 'Slave Device',
-                'verbose_name_plural': 'Slave Devices',
+                'verbose_name': 'Subordinate Device',
+                'verbose_name_plural': 'Subordinate Devices',
                 'permissions': (('view_devices', 'Can see available devices'), ('scan_devices', 'Can scan for new devices'), ('change_state_devices', 'Can change the state of the devices')),
             },
         ),
@@ -92,7 +92,7 @@ class Migration(migrations.Migration):
                 ('Code', models.CharField(help_text='Unique identifier of the device type. Usually between 5 and 8 characters.', max_length=20, unique=True)),
                 ('Description', models.CharField(max_length=100)),
                 ('MinSampletime', models.PositiveSmallIntegerField(default=10, help_text='Minimum accepted time between two polls. Refer to the device type documentation.')),
-                ('Connection', models.PositiveSmallIntegerField(choices=[(0, 'LOCAL'), (1, 'REMOTE OVER TCP'), (2, 'MEMORY')], help_text='The connection can be: \n                                                                    - LOCAL for devices that connect to a pin of the Master unit.\n                                                                    - REMOTE OVER TCP for devices communicating through the WiFi interface.\n                                                                    - MEMORY for devices that reside in the memory of the Master unit.')),
+                ('Connection', models.PositiveSmallIntegerField(choices=[(0, 'LOCAL'), (1, 'REMOTE OVER TCP'), (2, 'MEMORY')], help_text='The connection can be: \n                                                                    - LOCAL for devices that connect to a pin of the Main unit.\n                                                                    - REMOTE OVER TCP for devices communicating through the WiFi interface.\n                                                                    - MEMORY for devices that reside in the memory of the Main unit.')),
                 ('Picture', models.ImageField(blank=True, null=True, upload_to=DevicesAPP.models.path_file_name, verbose_name='DeviceType picture')),
             ],
             options={
@@ -132,7 +132,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='MasterGPIOs',
+            name='MainGPIOs',
             fields=[
                 ('Pin', models.PositiveSmallIntegerField(help_text='The number of the pin following BCM notation.', primary_key=True, serialize=False, unique=True)),
                 ('Label', models.CharField(help_text='Label describing the GPIO functional meaning.', max_length=50, unique=True)),
@@ -142,7 +142,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Input/Output',
                 'verbose_name_plural': 'Inputs/Outputs',
-                'permissions': (('view_mastergpios', 'Can see available gpios'), ('change_state_mastergpios', 'Can change the state of the GPIOs')),
+                'permissions': (('view_maingpios', 'Can see available gpios'), ('change_state_maingpios', 'Can change the state of the GPIOs')),
             },
         ),
         migrations.AddField(
@@ -153,7 +153,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='devices',
             name='IO',
-            field=models.OneToOneField(blank=True, help_text='The pin of the Master unit to which the device is connected. Only applies to locally connected devices.', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='pin2device', to='DevicesAPP.MasterGPIOs'),
+            field=models.OneToOneField(blank=True, help_text='The pin of the Main unit to which the device is connected. Only applies to locally connected devices.', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='pin2device', to='DevicesAPP.MainGPIOs'),
         ),
         migrations.AddField(
             model_name='devicecommands',

@@ -13,12 +13,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='mastergpios',
+            model_name='maingpios',
             name='NotificationFalse',
             field=models.BooleanField(default=False, help_text='Send notification when the rule evaluates to False'),
         ),
         migrations.AddField(
-            model_name='mastergpios',
+            model_name='maingpios',
             name='NotificationTrue',
             field=models.BooleanField(default=False, help_text='Send notification when the rule evaluates to True'),
         ),

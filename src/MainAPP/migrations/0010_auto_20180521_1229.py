@@ -50,21 +50,21 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='sitesettings',
             name='WIFI_GATE',
-            field=models.GenericIPAddressField(default='10.10.10.1', help_text='This is the gateway for the WiFi network generated to communicate with the slaves', protocol='IPv4', verbose_name='WIFI network gateway'),
+            field=models.GenericIPAddressField(default='10.10.10.1', help_text='This is the gateway for the WiFi network generated to communicate with the subordinates', protocol='IPv4', verbose_name='WIFI network gateway'),
         ),
         migrations.AlterField(
             model_name='sitesettings',
             name='WIFI_IP',
-            field=models.GenericIPAddressField(default='10.10.10.1', help_text='This is the IP address for the WiFi network generated to communicate with the slaves', protocol='IPv4', verbose_name='IP address for the WIFI network'),
+            field=models.GenericIPAddressField(default='10.10.10.1', help_text='This is the IP address for the WiFi network generated to communicate with the subordinates', protocol='IPv4', verbose_name='IP address for the WIFI network'),
         ),
         migrations.AlterField(
             model_name='sitesettings',
             name='WIFI_MASK',
-            field=models.GenericIPAddressField(default='255.255.255.0', help_text='This is the mask of the WiFi network generated to communicate with the slaves', protocol='IPv4', verbose_name='WIFI network mask'),
+            field=models.GenericIPAddressField(default='255.255.255.0', help_text='This is the mask of the WiFi network generated to communicate with the subordinates', protocol='IPv4', verbose_name='WIFI network mask'),
         ),
         migrations.AlterField(
             model_name='sitesettings',
             name='WIFI_SSID',
-            field=models.CharField(default='DIY4dot0', help_text='This is the name of the WiFi network generated to communicate with the slaves', max_length=50, verbose_name='WIFI network identificator'),
+            field=models.CharField(default='DIY4dot0', help_text='This is the name of the WiFi network generated to communicate with the subordinates', max_length=50, verbose_name='WIFI network identificator'),
         ),
     ]

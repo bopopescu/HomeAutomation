@@ -85,19 +85,19 @@ class SiteSettings(SingletonModel):
                                 help_text=_('Time difference in minutes that will trigger a restart of the NTP server'),default=5)
     
     WIFI_SSID= models.CharField(verbose_name=_('WIFI network identificator'),
-                                help_text=_('This is the name of the WiFi network generated to communicate with the slaves'),
+                                help_text=_('This is the name of the WiFi network generated to communicate with the subordinates'),
                                 max_length=50,default='DIY4dot0')
     WIFI_PASSW= models.CharField(verbose_name=_('WIFI network passphrase'),
                                 help_text=_('This is the encryption password for the WIFI network'),
                                 max_length=50,default='DIY4dot0')
     WIFI_IP= models.GenericIPAddressField(verbose_name=_('IP address for the WIFI network'),
-                                help_text=_('This is the IP address for the WiFi network generated to communicate with the slaves'),
+                                help_text=_('This is the IP address for the WiFi network generated to communicate with the subordinates'),
                                 protocol='IPv4', default='10.10.10.1')
     WIFI_MASK= models.GenericIPAddressField(verbose_name=_('WIFI network mask'),
-                                help_text=_('This is the mask of the WiFi network generated to communicate with the slaves'),
+                                help_text=_('This is the mask of the WiFi network generated to communicate with the subordinates'),
                                 protocol='IPv4', default='255.255.255.0')
     WIFI_GATE= models.GenericIPAddressField(verbose_name=_('WIFI network gateway'),
-                                help_text=_('This is the gateway for the WiFi network generated to communicate with the slaves'),
+                                help_text=_('This is the gateway for the WiFi network generated to communicate with the subordinates'),
                                 protocol='IPv4', default='10.10.10.1')
     
     ETH_DHCP=models.BooleanField(verbose_name=_('Enable DHCP on the LAN network'),

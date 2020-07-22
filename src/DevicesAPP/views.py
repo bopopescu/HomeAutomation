@@ -56,12 +56,12 @@ def modelSplitter(model):
         FormKwargs={'action':'add'}
         message=models.DeviceTypes._meta.verbose_name.title()+ str(_(' saved OK'))
         lastAction='add'
-    elif model=='mastergpios':
-        Header1 = models.MasterGPIOs._meta.verbose_name.title()
-        Model=models.MasterGPIOs
-        FormModel=forms.MasterGPIOsForm
+    elif model=='maingpios':
+        Header1 = models.MainGPIOs._meta.verbose_name.title()
+        Model=models.MainGPIOs
+        FormModel=forms.MainGPIOsForm
         FormKwargs={'action':'add'}
-        message=models.MasterGPIOs._meta.verbose_name.title()+ str(_(' saved OK'))
+        message=models.MainGPIOs._meta.verbose_name.title()+ str(_(' saved OK'))
         lastAction='add'
     elif model=='maindevicevars':
         Header1 = models.MainDeviceVars._meta.verbose_name.title()
@@ -259,7 +259,7 @@ def viewGraphs(request,model):
                 charts=DV.getCharts(fromDate=fromDate,toDate=toDate)
             else:
                 logger.info('The device is the Main Unit')
-                charts=models.MasterGPIOs.getCharts(fromDate=fromDate,toDate=toDate)
+                charts=models.MainGPIOs.getCharts(fromDate=fromDate,toDate=toDate)
                 charts.append(models.MainDeviceVars.getCharts(fromDate=fromDate,toDate=toDate))
             if charts==[]:
                 message=_('The device ') + DV.Name + _(' does not have any datagram defined.')+'\n' + \
@@ -315,7 +315,7 @@ def viewList(request,model):
                                                                             'message_norows1':message_norows,
                                                                             'rows_table1':RWs
                                                                             })
-        elif Model == models.MasterGPIOs:
+        elif Model == models.MainGPIOs:
             IOs=Model.objects.all()
             OUTs=IOs.filter(Direction=GPIO_OUTPUT)
             numrows_out=OUTs.count()
@@ -404,7 +404,7 @@ def toggle(request,model,pk):
         if model=='devices':
             Instance.togglePolling()
             messages.info(request, 'accordion1')
-        elif model=='mastergpios':
+        elif model=='maingpios':
             Instance.toggle()
             messages.info(request, 'accordion4')
         elif model=='maindevicevars':

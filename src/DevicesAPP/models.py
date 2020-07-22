@@ -45,7 +45,7 @@ def getAllVariables():
 
     info=[]
     DVs=Devices.objects.all()
-    IOs=MasterGPIOs.objects.all()
+    IOs=MainGPIOs.objects.all()
     MainVars=MainDeviceVars.objects.all()
     tempvars=[]
     device='MainGPIOs'
@@ -444,14 +444,14 @@ def delete_MainDeviceVars(sender, instance,**kwargs):
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
     
-class MasterGPIOs(models.Model):
+class MainGPIOs(models.Model):
     
     class Meta:
         verbose_name = _('Input/Output')
         verbose_name_plural = _('Inputs/Outputs')
         permissions = (
-            ("view_mastergpios", "Can see available gpios"),
-            ("change_state_mastergpios", "Can change the state of the GPIOs"),
+            ("view_maingpios", "Can see available gpios"),
+            ("change_state_maingpios", "Can change the state of the GPIOs"),
         )
     SQLcreateRegisterTable = ''' 
                                 CREATE TABLE IF NOT EXISTS $ (
@@ -476,7 +476,7 @@ class MasterGPIOs(models.Model):
     Subsystem = GenericRelation(MainAPP.models.Subsystems,related_query_name='gpios')
     
     def __init__(self, *args, **kwargs):
-        super(MasterGPIOs, self).__init__(*args, **kwargs)
+        super(MainGPIOs, self).__init__(*args, **kwargs)
     
     def InputChangeEvent(self,*args):
         newValue=int(GPIO.input(self.Pin))
@@ -614,7 +614,7 @@ class MasterGPIOs(models.Model):
         return str(self.Pin)
     
     def getStructure(self):
-        IOs=MasterGPIOs.objects.filter(Direction=self.Direction)
+        IOs=MainGPIOs.objects.filter(Direction=self.Direction)
         values=[]
         names=[]
         types=[]
@@ -814,14 +814,14 @@ class MasterGPIOs(models.Model):
     @staticmethod
     def getIOVariables(self):
         DeviceVars=[]
-        IOs=MasterGPIOs.objects.filter(Q(Direction=GPIO_INPUT) | Q(Direction=GPIO_OUTPUT))
+        IOs=MainGPIOs.objects.filter(Q(Direction=GPIO_INPUT) | Q(Direction=GPIO_OUTPUT))
         for IO in IOs:
             DeviceVars.append({'Label':IO.Label,'Tag':IO.getRegistersDBTag(),'Device':'Main','Table':IO.getRegistersDBTable(),'BitPos':None})
         return DeviceVars        
     
     @staticmethod
     def initializeIOs(declareInputEvent=True):
-        IOs=MasterGPIOs.objects.all()
+        IOs=MainGPIOs.objects.all()
         logger.info("There are " + str(len(IOs))+" IOs configured")
         if len(IOs):
             logger.info("Initializing IOs from DB")
@@ -851,8 +851,8 @@ class MasterGPIOs(models.Model):
         
     
 
-@receiver(post_save, sender=MasterGPIOs, dispatch_uid="update_MasterGPIOs")
-def update_MasterGPIOs(sender, instance, update_fields,**kwargs):
+@receiver(post_save, sender=MainGPIOs, dispatch_uid="update_MainGPIOs")
+def update_MainGPIOs(sender, instance, update_fields,**kwargs):
     if kwargs['created']:   # new instance is created  
         logger.info('The IO ' + str(instance) + ' has been registered on the process ' + str(os.getpid()))
         if instance.Direction==GPIO_OUTPUT:
@@ -870,14 +870,14 @@ def update_MasterGPIOs(sender, instance, update_fields,**kwargs):
     else:
         pass
 
-@receiver(post_delete, sender=MasterGPIOs, dispatch_uid="delete_MasterGPIOs")
-def delete_MasterGPIOs(sender, instance,**kwargs):
+@receiver(post_delete, sender=MainGPIOs, dispatch_uid="delete_MainGPIOs")
+def delete_MainGPIOs(sender, instance,**kwargs):
     instance.deleteAutomationVars()
     logger.info('Se ha eliminado la IO ' + str(instance))
         
-class MasterGPIOsBinding(WebsocketBinding):
+class MainGPIOsBinding(WebsocketBinding):
 
-    model = MasterGPIOs
+    model = MainGPIOs
     stream = "GPIO_values"
     fields = ["Pin","Label","Direction","Value"]
 
@@ -902,10 +902,10 @@ class DeviceTypes(models.Model):
     Description = models.CharField(max_length=100)
     MinSampletime=models.PositiveSmallIntegerField(help_text=str(_('Minimum accepted time between two polls. Refer to the device type documentation.')),default=10)
     Connection= models.PositiveSmallIntegerField(help_text=str(_('''The connection can be: 
-                                                                    - LOCAL for devices that connect to a pin of the Master unit.
+                                                                    - LOCAL for devices that connect to a pin of the Main unit.
                                                                     - REMOTE OVER TCP for devices communicating through the WiFi interface.
                                                                     - REMOTE OVER RS485 for devices communicating through the RS485 interface.
-                                                                    - MEMORY for devices that reside in the memory of the Master unit.
+                                                                    - MEMORY for devices that reside in the memory of the Main unit.
                                                                     ''')),
                                                  choices=CONNECTION_CHOICES)
     Picture = models.ImageField('DeviceType picture',
@@ -1003,12 +1003,12 @@ class Devices(models.Model):
             ("scan_devices", "Can scan for new devices"),
             ("change_state_devices", "Can change the state of the devices"),
         )
-        verbose_name = _('Slave Device')
-        verbose_name_plural = _('Slave Devices')
+        verbose_name = _('Subordinate Device')
+        verbose_name_plural = _('Subordinate Devices')
         
     Name = models.CharField(help_text=str(_('Unique identifier of the device. Limited to 50 characters.')),
                             max_length=50,unique=True,error_messages={'unique':_("Invalid device name - This name already exists in the DB.")})
-    IO = models.OneToOneField(MasterGPIOs,help_text=str(_('The pin of the Master unit to which the device is connected. Only applies to locally connected devices.')),
+    IO = models.OneToOneField(MainGPIOs,help_text=str(_('The pin of the Main unit to which the device is connected. Only applies to locally connected devices.')),
                             on_delete=models.CASCADE,related_name='pin2device',unique=True,null=True,blank=True,limit_choices_to={'Direction': GPIO_SENSOR})
     Code = models.PositiveSmallIntegerField(help_text=str(_('Identifier of the device. It is used to identify the device within the communication frames.')),
                             blank=True,null=True,error_messages={'unique':_("Invalid device code - This code already exists in the DB.")})
